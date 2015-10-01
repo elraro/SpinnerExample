@@ -1,10 +1,13 @@
 package eu.elraro.spinnerexample;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,12 +27,13 @@ public class SpinnerActivity extends AppCompatActivity {
     //boton de añadir
     private Button button;
 
-    //opcion para añadir
+    //EditText para añadir la opcion
     private EditText opcion;
 
+    //el adapter
     private ArrayAdapter<String> adapter;
 
-
+    //el toast
     private Toast toast;
 
     @Override
@@ -37,18 +41,15 @@ public class SpinnerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spinner);
 
+        //Leemos array.xml y lo vamos a convertir a ArrayList para manejarlo mejor
         String[] dataxml = getResources().getStringArray(R.array.list);
-
         data = new ArrayList<String>();
-
         for(int i = 0; i < dataxml.length; i++) {
             data.add(dataxml[i]);
         }
 
         this.list = (Spinner) findViewById(R.id.spinner);
-
         this.opcion = (EditText) findViewById(R.id.editText);
-
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, data);
         list.setAdapter(adapter);
         list.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -56,6 +57,10 @@ public class SpinnerActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 switch (i) {
                     case 0:
+                        break;
+                    case 1:
+                        Intent in = new Intent(SpinnerActivity.this, NewActivity.class);
+                        startActivity(in);
                         break;
                     default:
                         toast = Toast.makeText(getApplicationContext(), data.get(i), Toast.LENGTH_SHORT);
@@ -81,6 +86,10 @@ public class SpinnerActivity extends AppCompatActivity {
                 list.setAdapter(adapter);
                 toast = Toast.makeText(getApplicationContext(), "Añadida la opcion " + opc, Toast.LENGTH_SHORT);
                 toast.show();
+
+                //Cerramos el teclado despues de hacer click al boton
+                InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
         });
 
